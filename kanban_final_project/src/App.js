@@ -4,7 +4,6 @@ import Home from "./Components/Home";
 import Login from "./Pages/Authentication/Login";
 import { action, logoutAction } from "./actions/AuthActions";
 import Signup from "./Pages/Authentication/Signup";
-
 export default function App() {
   const router = createBrowserRouter([
     {

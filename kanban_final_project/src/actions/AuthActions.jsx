@@ -1,7 +1,11 @@
 import { redirect } from "react-router-dom";
-import { auth,db } from "../Components/firebase";
+import { auth, db } from "../Components/firebase";
 import { doc, setDoc } from "firebase/firestore";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { toast } from "react-toastify";
 export async function action({ request }) {
   const formData = await request.formData();
   const email = formData.get("email");
@@ -15,11 +19,13 @@ export async function action({ request }) {
       if (!firstName || !lastName) {
         return { error: "First name and last name are required" };
       }
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
-      console.log("Signup Success", userCredential);
-      if(user)
-      {
+      if (user) {
         await setDoc(doc(db, "Users", userCredential.user.uid), {
           email: userCredential.user.email,
           firstName: firstName,
@@ -27,13 +33,18 @@ export async function action({ request }) {
           uid: userCredential.user.uid,
           createdAt: new Date().toISOString(),
         });
-        console.log("User data saved to Firestore");
+        toast.success("Signup successful!");
       }
-      return redirect("/login");
+      return redirect("/");
     } else {
       // LOGIN
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       console.log("Login Success", userCredential);
+      toast.success("Login successful!");
       return redirect("/");
     }
   } catch (error) {
@@ -42,18 +53,17 @@ export async function action({ request }) {
 }
 
 export async function logoutAction() {
+  console.log("Logging out user...");
   try {
     // Clear local storage or any authentication state
-    localStorage.removeItem("token");
-    localStorage.removeItem("userData");
+    await auth.signOut();
+    console.log("User logged out successfully");
+    toast.success("Logout successful!");
+    localStorage.removeItem("user");
 
-    // Optionally, you can also clear any user-related state in your application
-    // updateUserDataOutsideReact(null);
-
-    return redirect("/auth/login");
+    return redirect("/login");
   } catch (error) {
     console.error("Logout error:", error);
     return { error: ["An unexpected error occurred during logout"] };
   }
 }
-
