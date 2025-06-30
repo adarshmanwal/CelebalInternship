@@ -43,7 +43,6 @@ export async function action({ request }) {
         email,
         password
       );
-      console.log("Login Success", userCredential);
       toast.success("Login successful!");
       return redirect("/");
     }
@@ -53,14 +52,10 @@ export async function action({ request }) {
 }
 
 export async function logoutAction() {
-  console.log("Logging out user...");
   try {
-    // Clear local storage or any authentication state
     await auth.signOut();
-    console.log("User logged out successfully");
     toast.success("Logout successful!");
     localStorage.removeItem("user");
-
     return redirect("/login");
   } catch (error) {
     console.error("Logout error:", error);

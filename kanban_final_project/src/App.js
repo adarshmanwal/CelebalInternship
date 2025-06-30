@@ -1,9 +1,11 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom"
 import Root from "./Pages/Root";
-import Home from "./Components/Home";
 import Login from "./Pages/Authentication/Login";
 import { action, logoutAction } from "./actions/AuthActions";
 import Signup from "./Pages/Authentication/Signup";
+import Board from "./Pages/Board/Boards";
+import loadBoards from "./loaders/boards";
+import BoardsDetails from "./Pages/Board/BoardsDetails";
 export default function App() {
   const router = createBrowserRouter([
     {
@@ -13,19 +15,28 @@ export default function App() {
       children: [
         {
           index: true,
-          element: <Home></Home>
+          element: <Navigate to="/boards" replace />,
         },
         {
-          path: "/login",
+          path: 'boards',
+          // loader: loadBoards,
+          element: <Board></Board>,
+        },
+        {
+          path: "boards/:boardId",
+          element: <BoardsDetails></BoardsDetails>
+        },
+        {
+          path: "login",
           element: <Login></Login>,
           action: action
         },
         {
-          path: "/logout",
+          path: "logout",
           action: logoutAction,
         },
         {
-          path: "/signup",
+          path: "signup",
           element: <Signup></Signup>,
           action: action
         }
