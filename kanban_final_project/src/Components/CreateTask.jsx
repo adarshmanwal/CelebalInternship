@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { useBoards } from "../contexts/BordsContet";
+import { useBoards } from "../contexts/BoardsContext";
 import { toast } from "react-toastify";
-const CreateTask = ({ boardId, onClose,fetchTask }) => {
+const CreateTask = ({ boardId, onClose, fetchTask }) => {
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
-    stage: "To Do",
+    stage: "TODO",
   });
   const { createTask } = useBoards();
   const handleAddTask = async (e) => {
     e.preventDefault();
     try {
       const task = await createTask(boardId, newTask);
-      toast.success("Task created successfully !")
-      fetchTask()
-      onClose()
+      toast.success("Task created successfully !");
+      fetchTask();
+      onClose();
     } catch (error) {
-      toast.error("Error while creating the Task")
+      toast.error("Error while creating the Task");
     }
   };
   return (
@@ -44,8 +44,8 @@ const CreateTask = ({ boardId, onClose,fetchTask }) => {
           onChange={(e) => setNewTask({ ...newTask, stage: e.target.value })}
           className="w-full border rounded px-3 py-2"
         >
-          <option>To Do</option>
-          <option>In Progress</option>
+          <option>TODO</option>
+          <option>IN_PROGRESS</option>
           <option>Done</option>
         </select>
         <button

@@ -1,6 +1,6 @@
 import { Form } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useBoards } from "../contexts/BordsContet";
+import { useBoards } from "../contexts/BoardsContext";
 
 const CreateBoard = ({ onSuccess }) => {
   const { createBoard } = useBoards();

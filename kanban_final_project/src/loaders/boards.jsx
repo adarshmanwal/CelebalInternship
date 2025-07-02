@@ -9,7 +9,6 @@ export default async function loadBoards() {
     const boardsList = data.docs.map(doc => ({ ...doc.data() }));
     return boardsList
   } catch (error) {
-    console.log(`There was an error fetching the data in firestore: ${error}`);
     toast.error("error while fetching the tasks")
   }
 }
