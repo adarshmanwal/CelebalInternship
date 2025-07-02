@@ -1,22 +1,24 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
-import { db } from "../../Components/firebase";
 import Modal from "../../Components/Modal";
-import { useBoards } from "../../contexts/BordsContet";
+import { useBoards } from "../../contexts/BoardsContext";
 import CreateTask from "../../Components/CreateTask";
+import Column from "../../Components/Column";
+import { DndContext } from "@dnd-kit/core";
+import { toast } from "react-toastify";
 
+const COLUMNS = [
+  { id: "TODO", title: "To Do" },
+  { id: "IN_PROGRESS", title: "In Progress" },
+  { id: "DONE", title: "Done" },
+];
 const BoardsDetails = () => {
   const [openAddTaskModal, setOpenAddTaskModal] = useState(false);
   const { boardId } = useParams();
-  const { fetchSingleBoard, fetchTasks } = useBoards();
+  const { fetchSingleBoard, fetchTasks, updateTaskStage } = useBoards();
   const [board, setBoard] = useState({});
   const [tasks, setTasks] = useState([]);
-  // const [newTask, setNewTask] = useState({
-  //   title: "",
-  //   description: "",
-  //   stage: "To Do",
-  // });
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     fetchBoard();
     fetchTask();
@@ -29,6 +31,29 @@ const BoardsDetails = () => {
   const fetchBoard = async () => {
     const foundBoard = await fetchSingleBoard(boardId);
     setBoard(foundBoard);
+  };
+
+  const handleDragEnd =async (e) => {
+    try {
+      console.log("Drag Ended");
+      setLoading(true);
+      const { active, over } = e;
+      if (!over) return;
+      const taskId = active.id;
+      const newStage = over.id;
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskId ? { ...task, stage: newStage } : task
+        )
+      );
+      await updateTaskStage(boardId, taskId, newStage);
+      setLoading(false);
+      console.log("Drag Ended");
+    } catch (error) {
+      toast.error("Error while updating task stage");
+      setLoading(false);
+      return;
+    }
   };
   return (
     <>
@@ -58,37 +83,23 @@ const BoardsDetails = () => {
         </div>
 
         <div className="flex space-x-6 overflow-x-auto">
-          {["To Do", "In Progress", "Done"].map((listTitle) => (
-            <div
-              key={listTitle}
-              className="w-80 bg-gray-100 rounded-lg shadow-sm p-4 flex-shrink-0"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-800">
-                  {listTitle}
-                </h2>
+          <DndContext onDragEnd={handleDragEnd}>
+            {!loading ? (
+              COLUMNS.map((column) => {
+                return (
+                  <Column
+                    key={column.id}
+                    column={column}
+                    tasks={tasks.filter((task) => task.stage === column.id)}
+                  ></Column>
+                );
+              })
+            ) : (
+              <div className="flex justify-center items-center h-64 w-full">
+                <p className="text-gray-500">Loading...</p>
               </div>
-
-              {tasks
-                .filter((card) => card.stage === listTitle)
-                .map((card) => (
-                  <div
-                    key={card.id}
-                    className="bg-white p-4 rounded-lg shadow mb-4 cursor-pointer hover:bg-gray-50"
-                  >
-                    <h3 className="text-sm font-medium text-gray-900">
-                      Task Title: {card.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {card.description}
-                    </p>
-                    <div className="mt-2 text-xs text-gray-400">
-                      Due: {new Date(card.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                ))}
-            </div>
-          ))}
+            )}
+          </DndContext>
         </div>
       </div>
     </>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useBoards } from "../../contexts/BordsContet";
+import { useBoards } from "../../contexts/BoardsContext";
 import Model from "../../Components/Modal";
 import CreateBoard from "../../Components/CreateBoard";
 import { Link } from "react-router-dom";
