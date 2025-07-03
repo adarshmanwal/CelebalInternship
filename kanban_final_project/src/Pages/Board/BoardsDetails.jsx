@@ -35,7 +35,7 @@ const BoardsDetails = () => {
 
   const handleDragEnd =async (e) => {
     try {
-      console.log("Drag Ended");
+      console.log("Drag called");
       setLoading(true);
       const { active, over } = e;
       if (!over) return;
@@ -48,7 +48,6 @@ const BoardsDetails = () => {
       );
       await updateTaskStage(boardId, taskId, newStage);
       setLoading(false);
-      console.log("Drag Ended");
     } catch (error) {
       toast.error("Error while updating task stage");
       setLoading(false);

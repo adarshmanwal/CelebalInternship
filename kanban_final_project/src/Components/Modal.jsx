@@ -30,7 +30,7 @@ export default function Modal({ children, open, onClose }) {
     <dialog
       ref={dialog}
       onCancel={onClose} // Allow escape key to close
-      className="top-40 left-1/3 transform -translate-x-1/2 -translate-y-1/2 bg-white  rounded-xl shadow w-11/12 max-w-md backdrop:bg-black/50"
+      className="top-1/2 left-1/3 transform -translate-x-1/2 -translate-y-1/2 bg-white  rounded-xl shadow w-11/12 max-w-md backdrop:bg-black/50"
     >
       <button
         className="absolute top-2 right-2 p-1 rounded-lg text-gray-300 bg-white hover:bg-gray-50 hover:text-blue-950"

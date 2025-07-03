@@ -1,6 +1,13 @@
 // context/BoardContext.js
 import { createContext, useContext, useEffect, useState } from "react";
-import { collection, getDocs, addDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../Components/firebase";
 
 const BoardContext = createContext({
@@ -11,6 +18,7 @@ const BoardContext = createContext({
   fetchSingleBoard: () => {},
   fetchTasks: () => {},
   updateTaskStage: () => {},
+  updateTasksUser: () => {},
 });
 
 export const BoardProvider = ({ children }) => {
@@ -57,6 +65,13 @@ export const BoardProvider = ({ children }) => {
     }));
   };
 
+  const updateTasksUser = async (boardId, taskId, user) => {
+    debugger
+    const taskRef = doc(db, "Boards", boardId, "tasks", taskId);
+    await updateDoc(taskRef, { user: user });
+
+  };
+
   const createTask = async (boardId, task) => {
     await addDoc(collection(db, "Boards", boardId, "tasks"), {
       ...task,
@@ -75,7 +90,8 @@ export const BoardProvider = ({ children }) => {
     fetchTasks,
     fetchSingleBoard,
     createTask,
-    updateTaskStage
+    updateTaskStage,
+    updateTasksUser,
   };
 
   return <BoardContext.Provider value={ctx}>{children}</BoardContext.Provider>;
