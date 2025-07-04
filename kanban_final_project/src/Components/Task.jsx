@@ -1,13 +1,11 @@
 import { useDraggable } from "@dnd-kit/core";
 import { FiUsers } from "react-icons/fi";
 import { useEffect, useRef, useState } from "react";
-import { collection, getDocs, getFirestore } from "firebase/firestore";
 import { useBoards } from "../contexts/BoardsContext";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export function TaskCard({ task }) {
-  const [users, setUsers] = useState([]);
+export function TaskCard({ task,users }) {
   const [currentUser, setCurrentUser] = useState(() => {
     return task.user;
   });
@@ -16,19 +14,7 @@ export function TaskCard({ task }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: task.id,
   });
-  useEffect(() => {
-    const fetchAllUsers = async () => {
-      const db = getFirestore();
-      const usersCol = collection(db, "Users");
-      const userSnapshot = await getDocs(usersCol);
-      const userList = userSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setUsers(userList);
-    };
-    fetchAllUsers();
-  }, []);
+  
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {

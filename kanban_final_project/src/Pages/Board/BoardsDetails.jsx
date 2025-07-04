@@ -3,15 +3,17 @@ import { useParams } from "react-router-dom";
 import Modal from "../../Components/Modal";
 import { useBoards } from "../../contexts/BoardsContext";
 import CreateTask from "../../Components/CreateTask";
-import Column from "../../Components/Column";
-import { DndContext } from "@dnd-kit/core";
 import { toast } from "react-toastify";
-
+import LayoutToggleButton from "../../Components/LayoutToggleButton";
+import GridView from "../../Components/GridView";
+import ListView from "../../Components/ListView";
+import { collection, getDocs, getFirestore } from "firebase/firestore";
 const COLUMNS = [
   { id: "TODO", title: "To Do" },
   { id: "IN_PROGRESS", title: "In Progress" },
   { id: "DONE", title: "Done" },
 ];
+
 const BoardsDetails = () => {
   const [openAddTaskModal, setOpenAddTaskModal] = useState(false);
   const { boardId } = useParams();
@@ -19,10 +21,26 @@ const BoardsDetails = () => {
   const [board, setBoard] = useState({});
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isGridView, setIsGridView] = useState(true);
+  const [users, setUsers] = useState([]);
+
   useEffect(() => {
     fetchBoard();
     fetchTask();
-  }, [boardId]);
+  }, [boardId, fetchSingleBoard, fetchTasks]);
+  useEffect(() => {
+    const fetchAllUsers = async () => {
+      const db = getFirestore();
+      const usersCol = collection(db, "Users");
+      const userSnapshot = await getDocs(usersCol);
+      const userList = userSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setUsers(userList);
+    };
+    fetchAllUsers();
+  }, []);
 
   const fetchTask = async () => {
     const task = await fetchTasks(boardId);
@@ -33,9 +51,8 @@ const BoardsDetails = () => {
     setBoard(foundBoard);
   };
 
-  const handleDragEnd =async (e) => {
+  const handleDragEnd = async (e) => {
     try {
-      console.log("Drag called");
       setLoading(true);
       const { active, over } = e;
       if (!over) return;
@@ -72,34 +89,36 @@ const BoardsDetails = () => {
       </Modal>
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">{board.name}</h1>
-          <button
-            onClick={() => setOpenAddTaskModal(true)}
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
-          >
-            + Add Task
-          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">{board.name}</h1>
+          </div>
+          <div className="pr-4 flex items-center space-x-4">
+            <LayoutToggleButton onToggle={setIsGridView} />
+            <button
+              onClick={() => setOpenAddTaskModal(true)}
+              className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+            >
+              + Add Task
+            </button>
+          </div>
         </div>
 
-        <div className="flex space-x-6 overflow-x-auto">
-          <DndContext onDragEnd={handleDragEnd}>
-            {!loading ? (
-              COLUMNS.map((column) => {
-                return (
-                  <Column
-                    key={column.id}
-                    column={column}
-                    tasks={tasks.filter((task) => task.stage === column.id)}
-                  ></Column>
-                );
-              })
-            ) : (
-              <div className="flex justify-center items-center h-64 w-full">
-                <p className="text-gray-500">Loading...</p>
-              </div>
-            )}
-          </DndContext>
-        </div>
+        {isGridView ? (
+          <GridView
+            handleDragEnd={handleDragEnd}
+            tasks={tasks}
+            loading={loading}
+            COLUMNS={COLUMNS}
+            users={users}
+          ></GridView>
+        ) : (
+          <ListView
+            loading={loading}
+            COLUMNS={COLUMNS}
+            tasks={tasks}
+            users={users}
+          ></ListView>
+        )}
       </div>
     </>
   );

@@ -1,9 +1,8 @@
-import React from "react";
 
 import { useDroppable } from "@dnd-kit/core";
 import { TaskCard } from "./Task";
 
-const Column = ({ column, tasks }) => {
+const Column = ({ column, tasks,users }) => {
   const { setNodeRef } = useDroppable({
     id: column.id
   });
@@ -12,7 +11,7 @@ const Column = ({ column, tasks }) => {
       <h2 className="mb-4 font-semibold text-neutral-100">{column.title}</h2>
       <div ref={setNodeRef} className="flex flex-1 flex-col gap-4">
         {tasks.map((task) => {
-          return <TaskCard key={task.id} task={task} />;
+          return <TaskCard key={task.id} task={task} users={users} />;
         })}
       </div>
     </div>

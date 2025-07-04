@@ -66,7 +66,6 @@ export const BoardProvider = ({ children }) => {
   };
 
   const updateTasksUser = async (boardId, taskId, user) => {
-    debugger
     const taskRef = doc(db, "Boards", boardId, "tasks", taskId);
     await updateDoc(taskRef, { user: user });
 
