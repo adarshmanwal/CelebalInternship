@@ -1,13 +1,7 @@
-// src/context/PlaylistContext.jsx
 import React, { createContext, useContext, useState } from "react";
 
-// Create the context
 const PlaylistContext = createContext();
-
-// Custom hook for easier access
 export const usePlaylist = () => useContext(PlaylistContext);
-
-// Provider component
 export const PlaylistProvider = ({ children }) => {
   const [playlists, setPlaylists] = useState([]);
   const [currentPlaylist, setCurrentPlaylist] = useState(null);

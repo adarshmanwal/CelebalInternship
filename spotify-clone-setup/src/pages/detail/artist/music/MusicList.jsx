@@ -2,7 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import MusicCard from "../../../../components/music/MusicCard";
 import musicData from "../../../../constant/musicData";
+import { usePlaylist } from "../../../../context/PlaylistContext";
 const MusicList = () => {
+  const { playlists, addSongToPlaylist } = usePlaylist();
+
   return (
     <div className="w-full space-y-4">
       <h1 className="md:text-xl text-lg text-neutral-50 font-bold">Popular</h1>
@@ -17,6 +20,9 @@ const MusicList = () => {
             musicName={music.musicName}
             views={music.views}
             albumName={music.albumName}
+            showAddToPlaylist={true}
+            playlists={playlists}
+            onAddToPlaylist={addSongToPlaylist}
           />
         ))}
       </div>

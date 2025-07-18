@@ -50,7 +50,6 @@ const Playlist = () => {
         {/* Scrollable content */}
         <div className="h-full overflow-y-auto px-3 space-y-3 scrollbar-hide">
           {playlists.length === 0 ? (
-            // Empty state: create first playlist
             <div className="bg-[#242424] w-full rounded-md px-5 py-4 space-y-4">
               <div className="space-y-2">
                 <h6 className="text-sm font-bold text-white tracking-tight">
@@ -68,7 +67,6 @@ const Playlist = () => {
               </div>
             </div>
           ) : (
-            // Render existing playlists
             playlists.map((playlist) => (
               <div
                 key={playlist.id}
@@ -96,7 +94,6 @@ const Playlist = () => {
             ))
           )}
 
-          {/* Optional: Podcast section */}
           <div className="bg-[#242424] w-full rounded-md px-5 py-4 space-y-4">
             <div className="space-y-2">
               <h6 className="text-sm font-bold text-white tracking-tight">
