@@ -3,6 +3,7 @@ import Navbar from "../../../components/navbar/Navbar";
 import Artist from "./artist/Artist";
 import Album from "./album/Album";
 import Radio from "./radio/Radio";
+import Footer from "../../../components/footer/Footer";
 
 const Content = () => {
   return (
@@ -19,10 +20,7 @@ const Content = () => {
 
         <Radio />
 
-        {/* 🦶 Footer */}
-        <div className="pt-10 border-t border-neutral-800 text-sm text-neutral-400">
-          <p>© 2025 YourAppName — All rights reserved.</p>
-        </div>
+        <Footer />
       </div>
     </div>
   );
